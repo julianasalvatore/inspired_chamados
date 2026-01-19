@@ -2,204 +2,256 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Support – Head Office Brazil</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abertura de Chamado - Suporte TI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body {
     font-family: Arial, sans-serif;
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 10px;
-}
-h2, h3 { margin-top: 25px; }
-label { display: block; margin: 6px 0; }
-select, textarea, input[type="text"], input[type="datetime-local"] {
-    width: 100%;
-    padding: 8px;
-    margin-top: 6px;
-}
-button {
-    margin-top: 20px;
-    padding: 10px 18px;
-    font-size: 16px;
-    cursor: pointer;
-}
-.review {
-    background: #f4f6f8;
+    background: #f2f4f7;
     padding: 20px;
+}
+.container {
+    max-width: 800px;
+    background: #fff;
+    padding: 25px;
+    margin: auto;
     border-radius: 8px;
+}
+h2 { text-align: center; }
+label { font-weight: bold; margin-top: 15px; display: block; }
+select, textarea, input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+}
+textarea { resize: vertical; }
+button {
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    cursor: pointer;
     margin-top: 20px;
 }
-.hidden { display: none; }
+button:hover { background: #084298; }
+.review {
+    display: none;
+    background: #eef1f5;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 20px;
+}
+pre { white-space: pre-wrap; }
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<h2>Support – Head Office Brazil</h2>
+<h2>Abertura de Chamado – Suporte TI</h2>
 
-<form id="formChamado">
-
-<h3>Unidade</h3>
-<select id="unidade" required>
-<option value="">Selecione a unidade</option>
-<option>Head Office Brazil</option>
-<option>Os Batutinhas</option>
-<option>Colegio Leonardo Da Vici</option>
-<option>Eleva Botafogo</option>
-<option>Eleva Urca</option>
-<option>Eleva Barra da Tijuca</option>
-<option>Eleva Recife</option>
-<option>Eleva Brasilia</option>
-<option>Eleva São Paulo</option>
-<option>Guilandia federação</option>
-<option>Gurilandia Pituba</option>
-<option>Land School Federação</option>
-<option>Land School Pituba</option>
+<!-- PERFIL -->
+<label>Você é:</label>
+<select id="perfil" onchange="controlePerfil()">
+    <option value="">Selecione</option>
+    <option value="Aluno">Aluno</option>
+    <option value="Colaborador">Colaborador</option>
 </select>
 
-<h3>Solicitante</h3>
-<label><input type="radio" name="tipoPessoa" value="Aluno"> Aluno</label>
-<label><input type="radio" name="tipoPessoa" value="Colaborador"> Colaborador</label>
+<!-- EMAIL INSTITUCIONAL -->
+<label>Informe seu e-mail institucional:</label>
+<input type="email" id="email" placeholder="nome@instituicao.com">
 
-<div id="alunoCampos" class="hidden">
-<label>Sala <input type="text" id="salaAluno"></label>
-<label>Turma <input type="text" id="turmaAluno"></label>
+<!-- UNIDADE -->
+<label>Unidade:</label>
+<select id="unidade" onchange="controleUnidade()">
+    <option value="">Selecione</option>
+</select>
+
+<!-- CAMPOS ALUNO -->
+<div id="camposAluno" style="display:none;">
+    <label>Sala:</label>
+    <select id="salaAluno"></select>
+
+    <label>Turma:</label>
+    <input id="turmaAluno">
 </div>
 
-<div id="colaboradorCampos" class="hidden">
-<label>Setor <input type="text" id="setorColab"></label>
-<label>Sala <input type="text" id="salaColab"></label>
+<!-- CAMPOS COLABORADOR -->
+<div id="camposColaborador" style="display:none;">
+    <label>Setor:</label>
+    <select id="setor"></select>
+
+    <div id="blocoSalaColab">
+        <label>Sala para atendimento:</label>
+        <select id="salaColab"></select>
+    </div>
 </div>
 
-<h3>Equipamento / Solicitação</h3>
-<label><input type="radio" name="equipamento" value="Internet / Rede"> Internet / Rede</label>
-<label><input type="radio" name="equipamento" value="Laptop / Notebook"> Laptop / Notebook</label>
-<label><input type="radio" name="equipamento" value="Monitor"> Monitor</label>
-<label><input type="radio" name="equipamento" value="Impressora"> Impressora</label>
-<label><input type="radio" name="equipamento" value="Pacote Office"> Pacote Office</label>
+<!-- EQUIPAMENTO -->
+<label>Equipamento / Solicitação:</label>
+<select id="equipamento">
+    <option value="">Selecione</option>
+    <option>Notebook / Laptop</option>
+    <option>Carregador de notebook</option>
+    <option>Mouse</option>
+    <option>Teclado</option>
+    <option>Kit Mouse + Teclado</option>
+    <option>Headset</option>
+    <option>Pilha AA - Média</option>
+    <option>Pilha AAA - Palito</option>
+    <option>Monitor</option>
+    <option>Impressora</option>
+    <option>Internet / Rede</option>
+    <option>Pacote Office</option>
+    <option>Programa específico para o setor</option>
+    <option>Suporte para laptop / notebook</option>
+</select>
 
-<div id="problemasArea" class="hidden">
-<h3>Problema / Solicitação</h3>
-<div id="problemas"></div>
+<!--
+<label>Problema relacionado:</label>
+<select id="subproblema"></select>
+-->
 
-<div id="eventoArea" class="hidden">
-<label>Início do evento <input type="datetime-local" id="eventoInicio"></label>
-<label>Fim do evento <input type="datetime-local" id="eventoFim"></label>
+<label>Descrição detalhada do problema:</label>
+<textarea id="descricao" rows="4" placeholder="Descreva o problema com o máximo de detalhes possível"></textarea>
+
+<button onclick="gerarRevisao()">Revisar Chamado</button>
+
+<div class="review" id="revisao">
+    <h3>Revisão do Chamado</h3>
+    <pre id="resumo"></pre>
+    <button onclick="enviarEmail()">Confirmar e Abrir Chamado</button>
 </div>
-</div>
 
-<h3>Descrição detalhada</h3>
-<textarea id="descricao" rows="4"></textarea>
-
-<button type="submit">Revisar chamado</button>
-</form>
-
-<!-- REVISÃO -->
-<div id="revisao" class="review hidden">
-<h3>Revisão do chamado</h3>
-<p><strong>Unidade:</strong> <span id="revUnidade"></span></p>
-<p><strong>Solicitante:</strong> <span id="revPessoa"></span></p>
-<p><strong>Identificação:</strong> <span id="revIdent"></span></p>
-<p><strong>Equipamento:</strong> <span id="revEquip"></span></p>
-<p><strong>Problema:</strong> <span id="revProb"></span></p>
-<p><strong>Descrição:</strong><br><span id="revDesc"></span></p>
-
-<button onclick="voltar()">Voltar</button>
-<button onclick="enviarEmail()">Confirmar e abrir e-mail</button>
 </div>
 
 <script>
-const problemas = {
-    "Internet / Rede": [
-        "Não consigo me conectar à rede CORP",
-        "Não consigo me conectar à rede EE-Students",
-        "Ativar Rede Eventos"
-    ],
-    "Laptop / Notebook": ["Não liga", "Lento", "Tela azul"],
-    "Monitor": ["Sem imagem", "Imagem piscando"],
-    "Impressora": ["Não imprime", "Atolamento de papel"],
-    "Pacote Office": ["Instalação", "Ativação"]
-};
+const unidadesEscolares = [
+    "Os Batutinhas","Colégio Leonardo Da Vinci","Eleva Botafogo","Eleva Urca",
+    "Eleva Barra da Tijuca","Eleva Recife","Eleva Brasília","Eleva São Paulo",
+    "Gurilândia Federação","Gurilândia Pituba","Land School Federação","Land School Pituba"
+];
 
-document.querySelectorAll('input[name="tipoPessoa"]').forEach(r => {
-    r.addEventListener("change", () => {
-        document.getElementById("alunoCampos").classList.toggle("hidden", r.value !== "Aluno");
-        document.getElementById("colaboradorCampos").classList.toggle("hidden", r.value !== "Colaborador");
-    });
-});
+function gerarSequencia(prefixo, inicio, fim) {
+    return Array.from({length: fim - inicio + 1}, (_, i) =>
+        prefixo + String(inicio + i).padStart(2, "0")
+    );
+}
 
-document.querySelectorAll('input[name="equipamento"]').forEach(r => {
-    r.addEventListener("change", () => {
-        const area = document.getElementById("problemas");
-        area.innerHTML = "";
-        document.getElementById("eventoArea").classList.add("hidden");
+function salasPorUnidade(unidade) {
+    if (unidade === "Eleva Recife") {
+        return [
+            ...gerarSequencia("A",1,9),
+            ...gerarSequencia("B",1,22),
+            ...gerarSequencia("C",1,10),
+            "EAL","LAB01","LAB02","MAKER","ARTS",
+            ...gerarSequencia("D",1,13),
+            "DANÇA","MUSIC01","MUSIC02"
+        ];
+    }
 
-        (problemas[r.value] || ["Solicitação"]).forEach(p => {
-            area.innerHTML += `<label><input type="radio" name="problema" value="${p}"> ${p}</label>`;
-        });
+    if (unidade === "Eleva Brasília") {
+        return [
+            "Música","Drama","Artes",
+            ...gerarSequencia("A",1,20),"Maker Space",
+            ...gerarSequencia("B",1,20),
+            "Lab Química","Lab Física"
+        ];
+    }
 
-        document.getElementById("problemasArea").classList.remove("hidden");
-    });
-});
+    return [];
+}
 
-document.getElementById("problemas").addEventListener("change", e => {
-    document.getElementById("eventoArea").classList.toggle("hidden", e.target.value !== "Ativar Rede Eventos");
-});
+function controlePerfil() {
+    unidade.innerHTML = "<option value=''>Selecione</option>";
 
-document.getElementById("formChamado").addEventListener("submit", e => {
-    e.preventDefault();
+    if (perfil.value === "Aluno") {
+        unidadesEscolares.forEach(u => unidade.innerHTML += `<option>${u}</option>`);
+        camposAluno.style.display = "block";
+        camposColaborador.style.display = "none";
+    }
 
-    const unidade = document.getElementById("unidade").value;
-    const pessoa = document.querySelector('input[name="tipoPessoa"]:checked');
-    const equip = document.querySelector('input[name="equipamento"]:checked');
-    const prob = document.querySelector('input[name="problema"]:checked');
+    if (perfil.value === "Colaborador") {
+        unidade.innerHTML += "<option>Head Office Brazil</option>";
+        unidadesEscolares.forEach(u => unidade.innerHTML += `<option>${u}</option>`);
+        camposAluno.style.display = "none";
+        camposColaborador.style.display = "block";
+    }
+}
 
-    if (!unidade || !pessoa || !equip || !prob) {
-        alert("Preencha todos os campos obrigatórios.");
+function preencherSalas(selectSala, unidade) {
+    selectSala.innerHTML = "<option value=''>Selecione</option>";
+    salasPorUnidade(unidade).forEach(s =>
+        selectSala.innerHTML += `<option>${s}</option>`
+    );
+}
+
+function controleUnidade() {
+    setor.innerHTML = "";
+    salaAluno.innerHTML = "";
+    salaColab.innerHTML = "";
+    blocoSalaColab.style.display = "block";
+
+    if (perfil.value === "Aluno") {
+        preencherSalas(salaAluno, unidade.value);
         return;
     }
 
-    let ident = pessoa.value === "Aluno"
-        ? `Sala: ${salaAluno.value} | Turma: ${turmaAluno.value}`
-        : `Setor: ${setorColab.value} | Sala: ${salaColab.value}`;
+    if (perfil.value === "Colaborador") {
+        let setores = unidade.value === "Head Office Brazil"
+            ? ["Admissões","Administração","Finanças","Jurídico","Marketing","Operações",
+               "Pedagógico / Enhancement","RH - Recursos Humanos","TI - Tecnologia da Informação"]
+            : ["Professor","Coordenação","Operações","Administração","Diretoria","Secretaria"];
 
-    revUnidade.innerText = unidade;
-    revPessoa.innerText = pessoa.value;
-    revIdent.innerText = ident;
-    revEquip.innerText = equip.value;
-    revProb.innerText = prob.value;
-    revDesc.innerText = descricao.value || "Não informado";
+        setores.forEach(s => setor.innerHTML += `<option>${s}</option>`);
 
-    formChamado.classList.add("hidden");
-    revisao.classList.remove("hidden");
-});
+        if (unidade.value === "Head Office Brazil") {
+            blocoSalaColab.style.display = "none";
+        } else {
+            preencherSalas(salaColab, unidade.value);
+        }
+    }
+}
 
-function voltar() {
-    revisao.classList.add("hidden");
-    formChamado.classList.remove("hidden");
+function gerarRevisao() {
+    if (
+        !perfil.value ||
+        !email.value ||
+        !unidade.value ||
+        !equipamento.value ||
+        !descricao.value ||
+        (perfil.value === "Aluno" && (!salaAluno.value || !turmaAluno.value)) ||
+        (perfil.value === "Colaborador" && (!setor.value || (unidade.value !== "Head Office Brazil" && !salaColab.value)))
+    ) {
+        alert("Todos os campos devem ser preenchidos.");
+        return;
+    }
+
+    resumo.textContent =
+`Perfil: ${perfil.value}
+E-mail: ${email.value}
+Unidade: ${unidade.value}
+Setor: ${setor?.value || "N/A"}
+Sala: ${perfil.value === "Aluno" ? salaAluno.value : salaColab.value || "N/A"}
+Turma: ${turmaAluno?.value || "N/A"}
+Equipamento: ${equipamento.value}
+
+Descrição:
+${descricao.value}`;
+
+    revisao.style.display = "block";
 }
 
 function enviarEmail() {
-    const subject = `${revUnidade.innerText} – ${revEquip.innerText}`;
-
-    const body =
-`Unidade: ${revUnidade.innerText}
-Solicitante: ${revPessoa.innerText}
-${revIdent.innerText}
-
-Equipamento: ${revEquip.innerText}
-Problema: ${revProb.innerText}
-
-Descrição:
-${revDesc.innerText}`;
+    const subject = encodeURIComponent(`${unidade.value} – ${equipamento.value}`);
+    const body = encodeURIComponent(resumo.textContent);
 
     window.open(
         "https://outlook.office.com/mail/deeplink/compose"
         + "?to=it.support@inspirededu.com"
-        + "&subject=" + encodeURIComponent(subject)
-        + "&body=" + encodeURIComponent(body),
+        + "&subject=" + subject
+        + "&body=" + body,
         "_blank"
     );
 }
