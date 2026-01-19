@@ -58,6 +58,10 @@ pre { white-space: pre-wrap; }
     <option value="Colaborador">Colaborador</option>
 </select>
 
+<!-- EMAIL INSTITUCIONAL -->
+<label>Informe seu e-mail institucional:</label>
+<input type="email" id="email" placeholder="nome@instituicao.com">
+
 <!-- UNIDADE -->
 <label>Unidade:</label>
 <select id="unidade" onchange="controleUnidade()">
@@ -86,7 +90,7 @@ pre { white-space: pre-wrap; }
 
 <!-- EQUIPAMENTO -->
 <label>Equipamento / Solicitação:</label>
-<select id="equipamento" onchange="atualizarSubProblema()">
+<select id="equipamento">
     <option value="">Selecione</option>
     <option>Notebook / Laptop</option>
     <option>Carregador de notebook</option>
@@ -104,11 +108,13 @@ pre { white-space: pre-wrap; }
     <option>Suporte para laptop / notebook</option>
 </select>
 
+<!--
 <label>Problema relacionado:</label>
 <select id="subproblema"></select>
+-->
 
-<label>Descrição detalhada (opcional):</label>
-<textarea id="descricao" rows="4"></textarea>
+<label>Descrição detalhada do problema:</label>
+<textarea id="descricao" rows="4" placeholder="Descreva o problema com o máximo de detalhes possível"></textarea>
 
 <button onclick="gerarRevisao()">Revisar Chamado</button>
 
@@ -208,45 +214,31 @@ function controleUnidade() {
     }
 }
 
-function atualizarSubProblema() {
-    const mapa = {
-        "Notebook / Laptop": ["Não liga","Tela","Teclado","Bateria","Sistema"],
-        "Carregador de notebook": ["Não carrega","Cabo danificado"],
-        "Mouse": ["Não funciona","Sem pilha","Conexão"],
-        "Teclado": ["Teclas falhando","Não funciona"],
-        "Kit Mouse + Teclado": ["Mouse","Teclado","Ambos"],
-        "Headset": ["Sem áudio","Microfone","Conexão"],
-        "Monitor": ["Sem imagem","Cabo","Resolução"],
-        "Impressora": ["Não imprime","Erro","Papel preso","Rede"],
-        "Internet / Rede": [
-            "Não conecta à rede corporativa",
-            "Não conecta à EE-Students",
-            "Ativar Rede Eventos (informar data/horário)"
-        ],
-        "Pacote Office": ["Instalação","Licença","Erro"],
-        "Programa específico para o setor": ["Instalação","Erro","Acesso"],
-        "Suporte para laptop / notebook": ["Configuração","Atualização","Manutenção"]
-    };
-
-    subproblema.innerHTML = "";
-    (mapa[equipamento.value] || ["Outro"]).forEach(p =>
-        subproblema.innerHTML += `<option>${p}</option>`
-    );
-}
-
 function gerarRevisao() {
-    if (!perfil.value || !unidade.value || !equipamento.value) {
-        alert("Preencha os campos obrigatórios.");
+    if (
+        !perfil.value ||
+        !email.value ||
+        !unidade.value ||
+        !equipamento.value ||
+        !descricao.value ||
+        (perfil.value === "Aluno" && (!salaAluno.value || !turmaAluno.value)) ||
+        (perfil.value === "Colaborador" && (!setor.value || (unidade.value !== "Head Office Brazil" && !salaColab.value)))
+    ) {
+        alert("Todos os campos devem ser preenchidos.");
         return;
     }
 
     resumo.textContent =
 `Perfil: ${perfil.value}
+E-mail: ${email.value}
 Unidade: ${unidade.value}
+Setor: ${setor?.value || "N/A"}
 Sala: ${perfil.value === "Aluno" ? salaAluno.value : salaColab.value || "N/A"}
+Turma: ${turmaAluno?.value || "N/A"}
 Equipamento: ${equipamento.value}
-Problema: ${subproblema.value}
-Descrição: ${descricao.value || "Não informada"}`;
+
+Descrição:
+${descricao.value}`;
 
     revisao.style.display = "block";
 }
