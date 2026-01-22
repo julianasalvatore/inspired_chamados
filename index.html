@@ -119,15 +119,45 @@ const equipamentosExtras = [
     "Telefone","Headset","Outro"
 ];
 
+const salasRestritasAluno = [
+    "Sala do Head Master",
+    "Sala da Coordenação",
+    "Sala da Coordenação do Infantil",
+    "Sala dos Professores",
+    "Sala dos Professores - Mezanino",
+    "Recepção do Infantil",
+    "Recepção Principal",
+    "Birô",
+    "Enfermaria"
+];
+
 function gerar(prefixo, ini, fim) {
     return Array.from({length:fim-ini+1},(_,i)=>prefixo+String(ini+i).padStart(2,"0"));
 }
 
 function salasPorUnidade(unidade) {
+
     if (unidade === "Eleva Botafogo") return [
-        "LAB 01","LAB 02","LAB 03","LAB 04",
-        ...gerar("B",1,36),...gerar("D",1,10),
-        "Maker","Auditório Vermelho","Sala Multiuso"
+        "Auditório Multiuso","Auditório Vermelho",
+        "Biblioteca Infantil","Biblioteca Principal",
+        "Birô","Enfermaria","Maker Space",
+        "Recepção do Infantil","Recepção Principal",
+        "Sala de Artes - Prédio Anexo",
+        "Sala de Música - Infantil",
+        "Sala de Música - Mezanino",
+        "Sala de Música - Prédio Anexo",
+        "Sala do Head Master",
+        "Sala da Coordenação",
+        "Sala da Coordenação do Infantil",
+        "Sala dos Professores",
+        "Sala dos Professores - Mezanino",
+        "LAB 01","LAB 02",
+        "LAB 03 - Prédio Anexo",
+        "LAB 04 - Prédio Anexo",
+        ...gerar("A",1,10),
+        ...gerar("B",1,36),
+        ...gerar("C",1,5),
+        ...gerar("D",1,10)
     ];
 
     if (unidade === "Eleva Urca") return [
@@ -187,7 +217,6 @@ function controleUnidade() {
 
     if (unidade.value === "Head Office Brazil") {
         blocoSala.style.display = "none";
-
         [
             "Admissões","Administração","Finanças","Jurídico","Marketing",
             "Operações","Pedagógico/ Enhancement",
@@ -200,8 +229,12 @@ function controleUnidade() {
 
     const salas = salasPorUnidade(unidade.value);
     if (salas) {
+        let listaFinal = salas;
+        if (perfil.value === "Aluno") {
+            listaFinal = salas.filter(s => !salasRestritasAluno.includes(s));
+        }
         let html="<select id='sala'><option value=''>Selecione</option>";
-        salas.forEach(s=>html+=`<option>${s}</option>`);
+        listaFinal.forEach(s=>html+=`<option>${s}</option>`);
         containerSala.innerHTML=html+"</select>";
     } else {
         containerSala.innerHTML="<input id='sala'>";
