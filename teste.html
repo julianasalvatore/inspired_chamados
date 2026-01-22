@@ -58,15 +58,17 @@ pre { white-space: pre-wrap; }
 </select>
 
 <label>E-mail institucional:</label>
-<input type="email" id="email" placeholder="nome.sobrenome@escolaeleva.com.br">
+<input type="email" id="email">
 
 <label>Unidade:</label>
 <select id="unidade" onchange="controleUnidade()">
     <option value="">Selecione</option>
 </select>
 
-<label>Sala:</label>
-<div id="containerSala"></div>
+<div id="blocoSala">
+    <label>Sala:</label>
+    <div id="containerSala"></div>
+</div>
 
 <div id="camposAluno" style="display:none;">
     <label>Turma:</label>
@@ -79,21 +81,7 @@ pre { white-space: pre-wrap; }
 </div>
 
 <label>Equipamento / Solicitação:</label>
-<select id="equipamento">
-    <option value="">Selecione</option>
-    <option>Notebook / Laptop</option>
-    <option>Carregador de notebook</option>
-    <option>Mouse</option>
-    <option>Teclado</option>
-    <option>Kit Mouse + Teclado</option>
-    <option>Headset</option>
-    <option>Monitor</option>
-    <option>Impressora</option>
-    <option>Internet / Rede</option>
-    <option>Pacote Office</option>
-    <option>Programa específico para o setor</option>
-    <option>Projetor</option>
-</select>
+<select id="equipamento"></select>
 
 <label>Descrição detalhada do problema (opcional):</label>
 <textarea id="descricao" rows="4"></textarea>
@@ -110,19 +98,25 @@ pre { white-space: pre-wrap; }
 
 <script>
 const unidades = [
-    "Head Office Brazil",
-    "Os Batutinhas",
-    "Colégio Leonardo Da Vinci",
-    "Eleva Botafogo",
-    "Eleva Urca",
-    "Eleva Barra da Tijuca",
-    "Eleva Recife",
-    "Eleva Brasília",
-    "Eleva São Paulo",
-    "Gurilândia Federação",
-    "Gurilândia Pituba",
-    "Land School Federação",
-    "Land School Pituba"
+    "Head Office Brazil","Os Batutinhas","Colégio Leonardo Da Vinci","Eleva Botafogo",
+    "Eleva Urca","Eleva Barra da Tijuca","Eleva Recife","Eleva Brasília","Eleva São Paulo",
+    "Gurilândia Federação","Gurilândia Pituba","Land School Federação","Land School Pituba"
+];
+
+const equipamentosAluno = [
+    "Computador","Chromebook","iPad","Internet","Carregador","Headset","Outro"
+];
+
+const equipamentosColaboradorBase = [
+    "Mouse","Teclado","Kit Mouse + Teclado",
+    "Monitor","Impressora","Internet / Rede",
+    "Pacote Office","Programa específico para o setor"
+];
+
+const equipamentosExtras = [
+    "Computador","Chromebook","Projetor","Som",
+    "iPad","Impressora","Internet","Carregador",
+    "Telefone","Headset","Outro"
 ];
 
 function gerar(prefixo, ini, fim) {
@@ -130,32 +124,43 @@ function gerar(prefixo, ini, fim) {
 }
 
 function salasPorUnidade(unidade) {
+    if (unidade === "Eleva Botafogo") return [
+        "LAB 01","LAB 02","LAB 03","LAB 04",
+        ...gerar("B",1,36),...gerar("D",1,10),
+        "Maker","Auditório Vermelho","Sala Multiuso"
+    ];
+
+    if (unidade === "Eleva Urca") return [
+        ...Array.from({length:12},(_,i)=>`Bloco Praia - Sala ${String(i+1).padStart(2,"0")}`),
+        ...Array.from({length:9},(_,i)=>`Bloco Ruínas - Sala ${String(i+12).padStart(2,"0")}`)
+    ];
+
     if (unidade === "Eleva Recife") return [
-        ...gerar("A",1,9), ...gerar("B",1,22), ...gerar("C",1,10),
+        ...gerar("A",1,9),...gerar("B",1,22),...gerar("C",1,10),
         "EAL","LAB01","LAB02","MAKER","ARTS",
         ...gerar("D",1,13),"DANÇA","MUSIC01","MUSIC02"
     ];
+
     if (unidade === "Eleva Brasília") return [
         "Música","Drama","Artes",
         ...gerar("A",1,20),"Maker Space",
         ...gerar("B",1,20),"Lab Química","Lab Física"
     ];
+
     if (unidade === "Eleva São Paulo") return [
-        "Sub-Solo - Sala de Música",
-        ...gerar("A",1,6), ...gerar("B",1,3),
-        ...gerar("C",1,13), ...gerar("D",1,7),
-        ...gerar("E",1,5), ...gerar("F",1,5)
+        "Subsolo - Sala de Música",
+        ...gerar("A",1,6),...gerar("B",1,3),
+        ...gerar("C",1,13),...gerar("D",1,7),
+        ...gerar("E",1,5),...gerar("F",1,5)
     ];
-    if (unidade === "Eleva Urca") return [
-        ...Array.from({length:12},(_,i)=>`Bloco Praia - Sala ${String(i+1).padStart(2,"0")}`),
-        ...Array.from({length:9},(_,i)=>`Bloco Ruínas - Sala ${String(i+12).padStart(2,"0")}`)
-    ];
+
     if (unidade === "Eleva Barra da Tijuca") return [
         ...Array.from({length:15},(_,i)=>`Sala A-${String(i+1).padStart(2,"0")}`),
         ...Array.from({length:26},(_,i)=>`Sala B-${String(i+1).padStart(2,"0")}`),
         ...Array.from({length:10},(_,i)=>`Sala C-${String(i+1).padStart(2,"0")}`),
         ...Array.from({length:10},(_,i)=>`Sala D-${String(i+1).padStart(2,"0")}`)
     ];
+
     return null;
 }
 
@@ -163,58 +168,77 @@ function controlePerfil() {
     unidade.innerHTML = "<option value=''>Selecione</option>";
     unidades.forEach(u => unidade.innerHTML += `<option>${u}</option>`);
 
-    camposAluno.style.display = perfil.value === "Aluno" ? "block" : "none";
-    camposColaborador.style.display = perfil.value === "Colaborador" ? "block" : "none";
+    camposAluno.style.display = perfil.value==="Aluno"?"block":"none";
+    camposColaborador.style.display = perfil.value==="Colaborador"?"block":"none";
+
+    equipamento.innerHTML = "<option value=''>Selecione</option>";
+
+    if (perfil.value==="Aluno") {
+        equipamentosAluno.forEach(e=>equipamento.innerHTML+=`<option>${e}</option>`);
+    } else {
+        [...new Set([...equipamentosColaboradorBase, ...equipamentosExtras])]
+            .forEach(e=>equipamento.innerHTML+=`<option>${e}</option>`);
+    }
 }
 
 function controleUnidade() {
     containerSala.innerHTML = "";
     setor.innerHTML = "";
 
-    const salas = salasPorUnidade(unidade.value);
-    if (salas) {
-        let html = "<select id='sala'><option value=''>Selecione</option>";
-        salas.forEach(s => html += `<option>${s}</option>`);
-        containerSala.innerHTML = html + "</select>";
-    } else {
-        containerSala.innerHTML = "<input id='sala' placeholder='Informe a sala'>";
+    if (unidade.value === "Head Office Brazil") {
+        blocoSala.style.display = "none";
+
+        [
+            "Admissões","Administração","Finanças","Jurídico","Marketing",
+            "Operações","Pedagógico/ Enhancement",
+            "RH - Recursos Humanos","TI - Tecnologia da Informação"
+        ].forEach(s=>setor.innerHTML+=`<option>${s}</option>`);
+        return;
     }
 
-    if (perfil.value === "Colaborador") {
-        const setoresHO = ["Admissões","Administração","Finanças","Jurídico","Marketing","Operações","Pedagógico / Enhancement","RH","TI"];
-        const setoresPadrao = ["Professor","Coordenação","Operações","Administração","Diretoria","Secretaria"];
-        (unidade.value === "Head Office Brazil" ? setoresHO : setoresPadrao)
-            .forEach(s => setor.innerHTML += `<option>${s}</option>`);
+    blocoSala.style.display = "block";
+
+    const salas = salasPorUnidade(unidade.value);
+    if (salas) {
+        let html="<select id='sala'><option value=''>Selecione</option>";
+        salas.forEach(s=>html+=`<option>${s}</option>`);
+        containerSala.innerHTML=html+"</select>";
+    } else {
+        containerSala.innerHTML="<input id='sala'>";
+    }
+
+    if (perfil.value==="Colaborador") {
+        ["Professor","Coordenação","Operações","Administração","Diretoria","Secretaria"]
+            .forEach(s=>setor.innerHTML+=`<option>${s}</option>`);
     }
 }
 
 function extrairNome(email) {
-    return email.split("@")[0]
-        .replace(/[._]/g," ")
-        .toLowerCase()
+    return email.split("@")[0].replace(/[._]/g," ")
         .replace(/\b\w/g,l=>l.toUpperCase());
 }
 
 function gerarRevisao() {
-    if (!perfil.value || !email.value || !unidade.value || !equipamento.value) {
-        alert("Preencha os campos obrigatórios.");
-        return;
-    }
+    const nome = extrairNome(email.value);
+    const sala = document.getElementById("sala")?.value || "N/A";
 
-    resumo.textContent =
-`Nome: ${extrairNome(email.value)}
-Perfil: ${perfil.value}
+    let texto =
+`Perfil: ${perfil.value}
+Nome: ${nome}
 E-mail: ${email.value}
-Unidade: ${unidade.value}
-Sala: ${document.getElementById("sala")?.value || "N/A"}
-Setor: ${setor.value || "N/A"}
-Turma: ${turmaAluno.value || "N/A"}
-Equipamento: ${equipamento.value}
+Unidade: ${unidade.value}`;
 
+    if (unidade.value !== "Head Office Brazil") texto += `\nSala: ${sala}`;
+    if (perfil.value==="Aluno") texto += `\nTurma: ${turmaAluno.value || "N/A"}`;
+    else texto += `\nSetor: ${setor.value || "N/A"}`;
+
+    texto += `
+Equipamento: ${equipamento.value}
 Descrição:
 ${descricao.value || "Não informada"}`;
 
-    revisao.style.display = "block";
+    resumo.textContent = texto;
+    revisao.style.display="block";
 }
 
 function enviarEmail() {
@@ -222,23 +246,11 @@ function enviarEmail() {
     const corpo = encodeURIComponent(resumo.textContent);
     const emailUser = email.value.toLowerCase();
 
-    if (perfil.value === "Aluno" || emailUser.endsWith("@escolaeleva.com.br")) {
-        window.open(
-            `https://mail.google.com/mail/?view=cm&to=it.support@inspirededu.com&su=${encodeURIComponent(assunto)}&body=${corpo}`,
-            "_blank"
-        );
+    if (perfil.value==="Aluno" || emailUser.endsWith("@escolaeleva.com.br")) {
+        window.open(`https://mail.google.com/mail/?view=cm&to=it.support@inspirededu.com&su=${encodeURIComponent(assunto)}&body=${corpo}`,"_blank");
         return;
     }
-
-    if (emailUser.endsWith("@inspirededu.com")) {
-        window.open(
-            `https://outlook.office.com/mail/deeplink/compose?to=it.support@inspirededu.com&subject=${encodeURIComponent(assunto)}&body=${corpo}`,
-            "_blank"
-        );
-        return;
-    }
-
-    alert("Domínio de e-mail não reconhecido.");
+    window.open(`https://outlook.office.com/mail/deeplink/compose?to=it.support@inspirededu.com&subject=${encodeURIComponent(assunto)}&body=${corpo}`,"_blank");
 }
 </script>
 
