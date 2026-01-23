@@ -184,13 +184,6 @@ function salasPorUnidade(unidade) {
         ...gerar("E",1,5),...gerar("F",1,5)
     ];
 
-    if (unidade === "Eleva Barra da Tijuca") return [
-        ...Array.from({length:15},(_,i)=>`Sala A-${String(i+1).padStart(2,"0")}`),
-        ...Array.from({length:26},(_,i)=>`Sala B-${String(i+1).padStart(2,"0")}`),
-        ...Array.from({length:10},(_,i)=>`Sala C-${String(i+1).padStart(2,"0")}`),
-        ...Array.from({length:10},(_,i)=>`Sala D-${String(i+1).padStart(2,"0")}`)
-    ];
-
     return null;
 }
 
@@ -274,16 +267,35 @@ ${descricao.value || "Não informada"}`;
     revisao.style.display="block";
 }
 
+function isMobile() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
 function enviarEmail() {
     const assunto = `${unidade.value} – ${equipamento.value} – ${extrairNome(email.value)}`;
     const corpo = encodeURIComponent(resumo.textContent);
+    const destino = "it.support@inspirededu.com";
+
+    // 📱 Mobile → app de e-mail
+    if (isMobile()) {
+        window.location.href = `mailto:${destino}?subject=${encodeURIComponent(assunto)}&body=${corpo}`;
+        return;
+    }
+
+    // 💻 Desktop → webmail
     const emailUser = email.value.toLowerCase();
 
     if (perfil.value==="Aluno" || emailUser.endsWith("@escolaeleva.com.br")) {
-        window.open(`https://mail.google.com/mail/?view=cm&to=it.support@inspirededu.com&su=${encodeURIComponent(assunto)}&body=${corpo}`,"_blank");
-        return;
+        window.open(
+            `https://mail.google.com/mail/?view=cm&to=${destino}&su=${encodeURIComponent(assunto)}&body=${corpo}`,
+            "_blank"
+        );
+    } else {
+        window.open(
+            `https://outlook.office.com/mail/deeplink/compose?to=${destino}&subject=${encodeURIComponent(assunto)}&body=${corpo}`,
+            "_blank"
+        );
     }
-    window.open(`https://outlook.office.com/mail/deeplink/compose?to=it.support@inspirededu.com&subject=${encodeURIComponent(assunto)}&body=${corpo}`,"_blank");
 }
 </script>
 
