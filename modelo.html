@@ -12,7 +12,7 @@ body {
     padding: 20px;
 }
 .container {
-    max-width: 800px;
+    max-width: 900px;
     background: #fff;
     padding: 25px;
     margin: auto;
@@ -58,17 +58,19 @@ pre { white-space: pre-wrap; }
 </select>
 
 <label>E-mail institucional:</label>
-<input type="email" id="email" required placeholder="nome.sobrenome@escolaeleva.com.br">
+<input type="email" id="email">
 
 <label>Unidade:</label>
 <select id="unidade" onchange="controleUnidade()">
     <option value="">Selecione</option>
 </select>
 
-<div id="camposAluno" style="display:none;">
+<div id="blocoSala">
     <label>Sala:</label>
-    <input id="salaAluno">
+    <div id="containerSala"></div>
+</div>
 
+<div id="camposAluno" style="display:none;">
     <label>Turma:</label>
     <input id="turmaAluno">
 </div>
@@ -76,31 +78,10 @@ pre { white-space: pre-wrap; }
 <div id="camposColaborador" style="display:none;">
     <label>Setor:</label>
     <select id="setor"></select>
-
-    <div id="blocoSalaColab">
-        <label>Sala para atendimento:</label>
-        <div id="containerSalaColab"></div>
-    </div>
 </div>
 
 <label>Equipamento / Solicitação:</label>
-<select id="equipamento">
-    <option value="">Selecione</option>
-    <option>Notebook / Laptop</option>
-    <option>Carregador de notebook</option>
-    <option>Mouse</option>
-    <option>Teclado</option>
-    <option>Kit Mouse + Teclado</option>
-    <option>Headset</option>
-    <option>Pilha AA - Média</option>
-    <option>Pilha AAA - Palito</option>
-    <option>Monitor</option>
-    <option>Impressora</option>
-    <option>Internet / Rede</option>
-    <option>Pacote Office</option>
-    <option>Programa específico para o setor</option>
-    <option>Suporte para laptop / notebook</option>
-</select>
+<select id="equipamento"></select>
 
 <label>Descrição detalhada do problema (opcional):</label>
 <textarea id="descricao" rows="4"></textarea>
@@ -117,129 +98,192 @@ pre { white-space: pre-wrap; }
 
 <script>
 const unidades = [
-    "Os Batutinhas","Colégio Leonardo Da Vinci","Eleva Botafogo","Eleva Urca",
-    "Eleva Barra da Tijuca","Eleva Recife","Eleva Brasília","Eleva São Paulo",
+    "Head Office Brazil","Os Batutinhas","Colégio Leonardo Da Vinci","Eleva Botafogo",
+    "Eleva Urca","Eleva Barra da Tijuca","Eleva Recife","Eleva Brasília","Eleva São Paulo",
     "Gurilândia Federação","Gurilândia Pituba","Land School Federação","Land School Pituba"
+];
+
+const equipamentosAluno = [
+    "Computador","Chromebook","iPad","Internet","Carregador","Headset","Outro"
+];
+
+const equipamentosColaboradorBase = [
+    "Mouse","Teclado","Kit Mouse + Teclado",
+    "Monitor","Impressora","Internet / Rede",
+    "Pacote Office","Programa específico para o setor"
+];
+
+const equipamentosExtras = [
+    "Computador","Chromebook","Projetor","Som",
+    "iPad","Impressora","Internet","Carregador",
+    "Telefone","Headset","Outro"
+];
+
+const salasRestritasAluno = [
+    "Sala do Head Master",
+    "Sala da Coordenação",
+    "Sala da Coordenação do Infantil",
+    "Sala dos Professores",
+    "Sala dos Professores - Mezanino",
+    "Recepção do Infantil",
+    "Recepção Principal",
+    "Birô",
+    "Enfermaria"
 ];
 
 function gerar(prefixo, ini, fim) {
     return Array.from({length:fim-ini+1},(_,i)=>prefixo+String(ini+i).padStart(2,"0"));
 }
 
-function salasFixas(unidade) {
+function salasPorUnidade(unidade) {
+
+    if (unidade === "Eleva Botafogo") return [
+        "Auditório Multiuso","Auditório Vermelho",
+        "Biblioteca Infantil","Biblioteca Principal",
+        "Birô","Enfermaria","Maker Space",
+        "Recepção do Infantil","Recepção Principal",
+        "Sala de Artes - Prédio Anexo",
+        "Sala de Música - Infantil",
+        "Sala de Música - Mezanino",
+        "Sala de Música - Prédio Anexo",
+        "Sala do Head Master",
+        "Sala da Coordenação",
+        "Sala da Coordenação do Infantil",
+        "Sala dos Professores",
+        "Sala dos Professores - Mezanino",
+        "LAB 01","LAB 02",
+        "LAB 03 - Prédio Anexo",
+        "LAB 04 - Prédio Anexo",
+        ...gerar("A",1,10),
+        ...gerar("B",1,36),
+        ...gerar("C",1,5),
+        ...gerar("D",1,10)
+    ];
+
+    if (unidade === "Eleva Urca") return [
+        ...Array.from({length:12},(_,i)=>`Bloco Praia - Sala ${String(i+1).padStart(2,"0")}`),
+        ...Array.from({length:9},(_,i)=>`Bloco Ruínas - Sala ${String(i+12).padStart(2,"0")}`)
+    ];
+
     if (unidade === "Eleva Recife") return [
         ...gerar("A",1,9),...gerar("B",1,22),...gerar("C",1,10),
         "EAL","LAB01","LAB02","MAKER","ARTS",
         ...gerar("D",1,13),"DANÇA","MUSIC01","MUSIC02"
     ];
+
     if (unidade === "Eleva Brasília") return [
         "Música","Drama","Artes",
         ...gerar("A",1,20),"Maker Space",
         ...gerar("B",1,20),"Lab Química","Lab Física"
     ];
+
     if (unidade === "Eleva São Paulo") return [
-        "Sub-Solo - Sala de Música",
+        "Subsolo - Sala de Música",
         ...gerar("A",1,6),...gerar("B",1,3),
         ...gerar("C",1,13),...gerar("D",1,7),
         ...gerar("E",1,5),...gerar("F",1,5)
     ];
-    if (unidade === "Eleva Urca") return [
-        ...Array.from({length:12},(_,i)=>`Bloco Praia - Sala ${String(i+1).padStart(2,"0")}`),
-        ...Array.from({length:9},(_,i)=>`Bloco Ruínas - Sala ${String(i+12).padStart(2,"0")}`)
-    ];
+
     if (unidade === "Eleva Barra da Tijuca") return [
         ...Array.from({length:15},(_,i)=>`Sala A-${String(i+1).padStart(2,"0")}`),
         ...Array.from({length:26},(_,i)=>`Sala B-${String(i+1).padStart(2,"0")}`),
         ...Array.from({length:10},(_,i)=>`Sala C-${String(i+1).padStart(2,"0")}`),
         ...Array.from({length:10},(_,i)=>`Sala D-${String(i+1).padStart(2,"0")}`)
     ];
+
     return null;
 }
 
 function controlePerfil() {
     unidade.innerHTML = "<option value=''>Selecione</option>";
+    unidades.forEach(u => unidade.innerHTML += `<option>${u}</option>`);
+
     camposAluno.style.display = perfil.value==="Aluno"?"block":"none";
     camposColaborador.style.display = perfil.value==="Colaborador"?"block":"none";
 
-    if (perfil.value==="Colaborador") unidade.innerHTML += "<option>Head Office Brazil</option>";
-    unidades.forEach(u=>unidade.innerHTML+=`<option>${u}</option>`);
+    equipamento.innerHTML = "<option value=''>Selecione</option>";
+
+    if (perfil.value==="Aluno") {
+        equipamentosAluno.forEach(e=>equipamento.innerHTML+=`<option>${e}</option>`);
+    } else {
+        [...new Set([...equipamentosColaboradorBase, ...equipamentosExtras])]
+            .forEach(e=>equipamento.innerHTML+=`<option>${e}</option>`);
+    }
 }
 
 function controleUnidade() {
+    containerSala.innerHTML = "";
     setor.innerHTML = "";
-    containerSalaColab.innerHTML = "";
 
-    if (perfil.value!=="Colaborador") return;
-
-    const setoresHO = ["Admissões","Administração","Finanças","Jurídico","Marketing","Operações","Pedagógico / Enhancement","RH - Recursos Humanos","TI - Tecnologia da Informação"];
-    const setoresPadrao = ["Professor","Coordenação","Operações","Administração","Diretoria","Secretaria"];
-    (unidade.value==="Head Office Brazil"?setoresHO:setoresPadrao)
-        .forEach(s=>setor.innerHTML+=`<option>${s}</option>`);
-
-    if (unidade.value==="Head Office Brazil") {
-        blocoSalaColab.style.display="none";
+    if (unidade.value === "Head Office Brazil") {
+        blocoSala.style.display = "none";
+        [
+            "Admissões","Administração","Finanças","Jurídico","Marketing",
+            "Operações","Pedagógico/ Enhancement",
+            "RH - Recursos Humanos","TI - Tecnologia da Informação"
+        ].forEach(s=>setor.innerHTML+=`<option>${s}</option>`);
         return;
     }
 
-    blocoSalaColab.style.display="block";
-    const salas = salasFixas(unidade.value);
+    blocoSala.style.display = "block";
 
+    const salas = salasPorUnidade(unidade.value);
     if (salas) {
-        let html="<select id='salaColab'><option value=''>Selecione</option>";
-        salas.forEach(s=>html+=`<option>${s}</option>`);
-        containerSalaColab.innerHTML=html+"</select>";
+        let listaFinal = salas;
+        if (perfil.value === "Aluno") {
+            listaFinal = salas.filter(s => !salasRestritasAluno.includes(s));
+        }
+        let html="<select id='sala'><option value=''>Selecione</option>";
+        listaFinal.forEach(s=>html+=`<option>${s}</option>`);
+        containerSala.innerHTML=html+"</select>";
     } else {
-        containerSalaColab.innerHTML="<input id='salaColab' placeholder='Informe a sala'>";
+        containerSala.innerHTML="<input id='sala'>";
+    }
+
+    if (perfil.value==="Colaborador") {
+        ["Professor","Coordenação","Operações","Administração","Diretoria","Secretaria"]
+            .forEach(s=>setor.innerHTML+=`<option>${s}</option>`);
     }
 }
 
-/* 🔹 EXTRAI NOME DO E-MAIL */
 function extrairNome(email) {
-    let nome = email.split("@")[0]
-        .replace(/[._]/g, " ")
-        .toLowerCase()
-        .replace(/\b\w/g, l => l.toUpperCase());
-    return nome;
+    return email.split("@")[0].replace(/[._]/g," ")
+        .replace(/\b\w/g,l=>l.toUpperCase());
 }
 
 function gerarRevisao() {
-    if (!perfil.value || !email.value || !unidade.value || !equipamento.value) {
-        alert("Preencha os campos obrigatórios.");
-        return;
-    }
+    const nome = extrairNome(email.value);
+    const sala = document.getElementById("sala")?.value || "N/A";
 
-    const nomeSolicitante = extrairNome(email.value);
-    const sala = perfil.value==="Aluno"
-        ? salaAluno.value
-        : document.getElementById("salaColab")?.value || "N/A";
-
-    resumo.textContent =
-`Nome do solicitante: ${nomeSolicitante}
-Perfil: ${perfil.value}
+    let texto =
+`Perfil: ${perfil.value}
+Nome: ${nome}
 E-mail: ${email.value}
-Unidade: ${unidade.value}
-Setor: ${setor.value || "N/A"}
-Sala: ${sala}
-Turma: ${turmaAluno.value || "N/A"}
-Equipamento: ${equipamento.value}
+Unidade: ${unidade.value}`;
 
+    if (unidade.value !== "Head Office Brazil") texto += `\nSala: ${sala}`;
+    if (perfil.value==="Aluno") texto += `\nTurma: ${turmaAluno.value || "N/A"}`;
+    else texto += `\nSetor: ${setor.value || "N/A"}`;
+
+    texto += `
+Equipamento: ${equipamento.value}
 Descrição:
 ${descricao.value || "Não informada"}`;
 
+    resumo.textContent = texto;
     revisao.style.display="block";
 }
 
 function enviarEmail() {
-    const nomeSolicitante = extrairNome(email.value);
-    const assunto = `${unidade.value} – ${equipamento.value} – ${nomeSolicitante}`;
+    const assunto = `${unidade.value} – ${equipamento.value} – ${extrairNome(email.value)}`;
+    const corpo = encodeURIComponent(resumo.textContent);
+    const emailUser = email.value.toLowerCase();
 
-    window.open(
-        "https://outlook.office.com/mail/deeplink/compose"
-        + "?to=it.support@inspirededu.com"
-        + "&subject=" + encodeURIComponent(assunto)
-        + "&body=" + encodeURIComponent(resumo.textContent),
-        "_blank"
-    );
+    if (perfil.value==="Aluno" || emailUser.endsWith("@escolaeleva.com.br")) {
+        window.open(`https://mail.google.com/mail/?view=cm&to=it.support@inspirededu.com&su=${encodeURIComponent(assunto)}&body=${corpo}`,"_blank");
+        return;
+    }
+    window.open(`https://outlook.office.com/mail/deeplink/compose?to=it.support@inspirededu.com&subject=${encodeURIComponent(assunto)}&body=${corpo}`,"_blank");
 }
 </script>
 
