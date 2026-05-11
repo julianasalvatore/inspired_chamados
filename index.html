@@ -479,6 +479,7 @@ const equipamentosAluno = [
     "Internet",
     "Carregador",
     "Headset",
+    "Agenda Edu, GSP, iSAMS, School Guardian ou Outro Sistema Educacional",
     "Outro"
 ];
 
@@ -489,8 +490,7 @@ const equipamentosColaboradorBase = [
     "Monitor",
     "Impressora",
     "Internet / Rede",
-    "Pacote Office",
-    "Programa específico para o setor"
+    "Pacote Office"
 ];
 
 const equipamentosExtras = [
@@ -504,6 +504,7 @@ const equipamentosExtras = [
     "Carregador",
     "Telefone",
     "Headset",
+    "Agenda Edu, GSP, iSAMS, School Guardian ou Outro Sistema Educacional",
     "Outro"
 ];
 
@@ -733,8 +734,13 @@ function enviarEmail(){
     const corpo =
         encodeURIComponent(resumo.textContent);
 
-    const destino =
-        "it.support@inspirededu.com";
+    const plataformasTE = [
+        "Agenda Edu, GSP, iSAMS, School Guardian ou Outro Sistema Educacional"
+    ];
+
+    const destino = plataformasTE.includes(equipamento.value)
+        ? "analistas.te@escolaeleva.com.br"
+        : "it.support@inspirededu.com";
 
     if(isMobile()){
 
