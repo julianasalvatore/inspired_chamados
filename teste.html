@@ -168,6 +168,25 @@ label{
 }
 
 /* =========================
+   TEXTO AUXILIAR
+========================= */
+
+.info-anexo{
+
+    margin-top:-2px;
+
+    margin-bottom:12px;
+
+    font-size:12px;
+
+    line-height:1.5;
+
+    color:#64748b;
+
+    font-style:italic;
+}
+
+/* =========================
    INPUTS
 ========================= */
 
@@ -432,7 +451,17 @@ pre{
 
     <select id="equipamento"></select>
 
-    <label>Descrição detalhada do problema (opcional):</label>
+    <label>
+    Descrição detalhada do problema (opcional):
+</label>
+
+<p class="info-anexo">
+    Caso possua imagens ou evidências do problema,
+    anexe os arquivos manualmente na janela do e-mail
+    que será aberta.
+</p>
+
+
 
     <textarea id="descricao"></textarea>
 
@@ -535,25 +564,29 @@ function salasPorUnidade(unidade){
         "Auditório Vermelho",
         "Biblioteca Infantil",
         "Biblioteca Principal",
-        "Birô",
+        "Birô de Impressões",
         "Enfermaria",
         "Maker Space",
+        "Maker Space - Fund. I - Mezanino",
+        "Maker Space Infantil / Sala do Tatame",
         "Recepção do Infantil",
         "Recepção Principal",
+        "Sala de Artes - Escada Monstro",
         "Sala de Artes - Prédio Anexo",
         "Sala de Música - Infantil",
         "Sala de Música - Mezanino",
         "Sala de Música - Prédio Anexo",
-        "Sala do Head Master",
-        "Sala da Coordenação",
+        "Sala do Diretor",
+        "Sala da Coordenação - Fund. I",
+        "Sala da Coordenação do Fund. II",
         "Sala da Coordenação do Infantil",
-        "Sala dos Professores",
-        "Sala dos Professores - Mezanino",
+        "Sala dos Professores - Fund. I - Mezanino",
+        "Sala dos Professores - Fund. II",
         "LAB 01",
         "LAB 02",
         "LAB 03 - Prédio Anexo",
         "LAB 04 - Prédio Anexo",
-        ...gerar("A",1,10),
+        ...gerar("A",1,16),
         ...gerar("B",1,36),
         ...gerar("C",1,5),
         ...gerar("D",1,10)
